@@ -71,8 +71,12 @@ ETH_TxPacketConfig TxConfig;
 
 ETH_HandleTypeDef heth;
 
+SPI_HandleTypeDef hspi1;
+DMA_HandleTypeDef hdma_spi1_tx;
+
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim15;
 
 UART_HandleTypeDef huart3;
 
@@ -90,6 +94,9 @@ static void MX_USART3_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM5_Init(void);
+static void MX_DMA_Init(void);
+static void MX_SPI1_Init(void);
+static void MX_TIM15_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -113,6 +120,18 @@ void requestT();
 void get_value();
 
 void Update_check_Value();
+uint8_t LCDsetup[]={
+		0x01,   //reset
+		0x11,   //sleep out
+		0x29,   //boot
+		0x36,0b1001000,   //set scan order
+		0x2a,0x00,0x00,0x00,127,   //set x
+		0x2b,0x00,0x00,0x00,127,	//set y
+		0x2c 	//write memory
+};
+void LCD_init();
+
+uint8_t Frame[49152]={0};
 
 /* USER CODE END 0 */
 
@@ -178,11 +197,18 @@ Error_Handler();
   MX_USB_OTG_FS_PCD_Init();
   MX_TIM3_Init();
   MX_TIM5_Init();
+  MX_DMA_Init();
+  MX_SPI1_Init();
+  MX_TIM15_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, 1);
   HAL_TIM_Base_Start_IT(&htim3);
   HAL_TIM_Base_Start_IT(&htim5);
+  HAL_TIM_Base_Start_IT(&htim15);
+  LCD_init();
+  HAL_Delay(2000);
+  HAL_SPI_Transmit_DMA(&hspi1, Frame, 49152);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -312,6 +338,54 @@ static void MX_ETH_Init(void)
 }
 
 /**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES_TXONLY;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 0x0;
+  hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  hspi1.Init.NSSPolarity = SPI_NSS_POLARITY_LOW;
+  hspi1.Init.FifoThreshold = SPI_FIFO_THRESHOLD_01DATA;
+  hspi1.Init.TxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+  hspi1.Init.RxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+  hspi1.Init.MasterSSIdleness = SPI_MASTER_SS_IDLENESS_00CYCLE;
+  hspi1.Init.MasterInterDataIdleness = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
+  hspi1.Init.MasterReceiverAutoSusp = SPI_MASTER_RX_AUTOSUSP_DISABLE;
+  hspi1.Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_DISABLE;
+  hspi1.Init.IOSwap = SPI_IO_SWAP_DISABLE;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
   * @brief TIM3 Initialization Function
   * @param None
   * @retval None
@@ -402,6 +476,52 @@ static void MX_TIM5_Init(void)
 }
 
 /**
+  * @brief TIM15 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM15_Init(void)
+{
+
+  /* USER CODE BEGIN TIM15_Init 0 */
+
+  /* USER CODE END TIM15_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM15_Init 1 */
+
+  /* USER CODE END TIM15_Init 1 */
+  htim15.Instance = TIM15;
+  htim15.Init.Prescaler = 99;
+  htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim15.Init.Period = 40;
+  htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim15.Init.RepetitionCounter = 0;
+  htim15.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim15) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim15, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim15, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM15_Init 2 */
+
+  /* USER CODE END TIM15_Init 2 */
+
+}
+
+/**
   * @brief USART3 Initialization Function
   * @param None
   * @retval None
@@ -486,6 +606,22 @@ static void MX_USB_OTG_FS_PCD_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -496,6 +632,7 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -503,7 +640,20 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : PF7 PF9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD1 */
   GPIO_InitStruct.Pin = GPIO_PIN_1;
@@ -520,9 +670,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim == &htim3){
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, 1);
-
+		HAL_TIM_Base_Stop(&htim3);
+		htim3.Instance->CNT=0;
 	}else if(htim== &htim5){
 		_micross=_micross+4294967295;
+	}else if(htim==&htim15){
+		value=(value<<1)|HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1);
+		HAL_TIM_Base_Stop(&htim15);
+		htim15.Instance->CNT=0;
 	}
 
 }
@@ -539,7 +694,7 @@ void requestT(){
 	if(flag){
 		value=0;
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, 0);
-		htim3.Instance->CNT=0;
+//		htim3.Instance->CNT=0;
 		HAL_TIM_Base_Start_IT(&htim3);
 		flag=0;
 	}
@@ -548,14 +703,16 @@ void requestT(){
 void get_value(){
 	now=HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1);
 	if(pre==0 && now==1){
-	  startT=micross();
-	  flagT=1;
+//	  startT=micross();
+//	  htim15.Instance->CNT=0;
+	  HAL_TIM_Base_Start_IT(&htim15);
+//	  flagT=1;
 	}
 	pre=now;
-	if(micross()-startT >=35 && flagT==1){
-	  value=(value<<1)|HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1);
-	  flagT=0;
-	}
+//	if(micross()-startT >=35 && flagT==1){
+//	  value=(value<<1)|HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1);
+//	  flagT=0;
+//	}
 }
 uint16_t humidity=0;
 uint16_t temp=0;
@@ -570,7 +727,7 @@ void Update_check_Value(){
 		sum=value&0b11111111;
 		temp=(value>>8)&0b1111111111111111;
 		humidity=(value>>24)&0b1111111111111111;
-
+		value=0;
 		//check sum
 		realsum=((humidity>>8)&0b11111111) + (humidity&0b11111111) +((temp>>8)&0b11111111) + (temp&0b11111111);
 		if(sum!=realsum){
@@ -584,10 +741,45 @@ void Update_check_Value(){
 				realtemp=temp/(10.00);//update value
 			}
 		}
-
-
 	}
 }
+
+
+
+
+
+void LCD_init(){
+
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9,0);	//ss pin
+
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,0);
+	HAL_SPI_Transmit(&hspi1, LCDsetup, 4, 100);
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,1);
+	HAL_SPI_Transmit(&hspi1, &LCDsetup[4], 1, 100);
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,0);
+	HAL_SPI_Transmit(&hspi1, &LCDsetup[5], 1, 100);
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,1);
+	HAL_SPI_Transmit(&hspi1, &LCDsetup[6], 4, 100);
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,0);
+	HAL_SPI_Transmit(&hspi1, &LCDsetup[10], 1, 100);
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,1);
+	HAL_SPI_Transmit(&hspi1, &LCDsetup[11], 4, 100);
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,0);
+	HAL_SPI_Transmit(&hspi1, &LCDsetup[15], 1, 100);
+
+	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_7,1);
+
+
+}
+
 
 
 //void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
