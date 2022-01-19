@@ -20,8 +20,6 @@
 #include "main.h"
 #include "string.h"
 
-
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -945,6 +943,8 @@ void sortt();
 void makeImg();
 
 void fillFrame();
+
+void Updatescreen();
 /* USER CODE END 0 */
 
 /**
@@ -1021,14 +1021,13 @@ Error_Handler();
   HAL_TIM_Base_Start_IT(&htim15);
 
   LCD_init();
-  HAL_Delay(500);
-  fillFrame();
-  sortt(22.22,42.26);
-  makeImg();
-  HAL_Delay(2000);
 
 
-  HAL_SPI_Transmit_DMA(&hspi1, Frame, 49152);
+
+
+
+
+
 
 
 
@@ -1184,7 +1183,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -1564,6 +1563,7 @@ void Update_check_Value(){
 			}else{
 				realtemp=temp/(10.00);//update value
 			}
+			Updatescreen();
 		}
 	}
 }
@@ -1651,7 +1651,7 @@ void makeImg(){
 		case 48:
 			for(int j=0;j<=5760;j++){
 				if(RH_Zero[j]!=0x3f){
-					 Frame[j]=RH_Zero[j];
+					 Frame[37020+j]=RH_Zero[j];
 				}
 
 			}
@@ -1659,63 +1659,63 @@ void makeImg(){
 		case 49:
 			for(int j=0;j<=5760;j++){
 				if(RH_One[j]!=0x3f){
-				  Frame[j]=RH_One[j];
+				  Frame[37020+j]=RH_One[j];
 				}
 			}
 		break;
 		case 50:
 			for(int j=0;j<=5760;j++){
 				if(RH_Two[j]!=0x3f){
-				  Frame[j]=RH_Two[j];
+				  Frame[37020+j]=RH_Two[j];
 				}
 			}
 		break;
 		case 51:
 			for(int j=0;j<=5760;j++){
 				if(RH_Three[j]!=0x3f){
-				  Frame[j]=RH_Three[j];
+				  Frame[37020+j]=RH_Three[j];
 				}
 			}
 		break;
 		case 52:
 			for(int j=0;j<=5760;j++){
 				if(RH_Four[j]!=0x3f){
-				  Frame[j]=RH_Four[j];
+				  Frame[37020+j]=RH_Four[j];
 				}
 			}
 		break;
 		case 53:
 			for(int j=0;j<=5760;j++){
 				if(RH_Five[j]!=0x3f){
-				  Frame[j]=RH_Five[j];
+				  Frame[37020+j]=RH_Five[j];
 				}
 			}
 		break;
 		case 54:
 			for(int j=0;j<=5760;j++){
 				if(RH_Six[j]!=0x3f){
-				  Frame[j]=RH_Six[j];
+				  Frame[37020+j]=RH_Six[j];
 				}
 			}
 		break;
 		case 55:
 			for(int j=0;j<=5760;j++){
 				if(RH_Seven[j]!=0x3f){
-				  Frame[j]=RH_Seven[j];
+				  Frame[37020+j]=RH_Seven[j];
 				}
 			}
 		break;
 		case 56:
 			for(int j=0;j<=5760;j++){
 				if(RH_Egg[j]!=0x3f){
-				  Frame[j]=RH_Egg[j];
+				  Frame[37020+j]=RH_Egg[j];
 				}
 			}
 		break;
 		case 57:
 			for(int j=0;j<=5760;j++){
 				if(RH_Nine[j]!=0x3f){
-				  Frame[j]=RH_Nine[j];
+				  Frame[37020+j]=RH_Nine[j];
 				}
 			}
 		break;
@@ -1725,7 +1725,7 @@ void makeImg(){
 			case 48:
 				for(int j=0;j<=5760;j++){
 					if(dot_Zero[j]!=0x3f){
-						 Frame[j]=dot_Zero[j];
+						 Frame[37020+j]=dot_Zero[j];
 					}
 
 				}
@@ -1733,63 +1733,63 @@ void makeImg(){
 			case 49:
 				for(int j=0;j<=5760;j++){
 					if(dot_One[j]!=0x3f){
-					  Frame[j]=dot_One[j];
+					  Frame[37020+j]=dot_One[j];
 					}
 				}
 			break;
 			case 50:
 				for(int j=0;j<=5760;j++){
 					if(dot_Two[j]!=0x3f){
-					  Frame[j]=dot_Two[j];
+					  Frame[37020+j]=dot_Two[j];
 					}
 				}
 			break;
 			case 51:
 				for(int j=0;j<=5760;j++){
 					if(dot_Three[j]!=0x3f){
-					  Frame[j]=dot_Three[j];
+					  Frame[37020+j]=dot_Three[j];
 					}
 				}
 			break;
 			case 52:
 				for(int j=0;j<=5760;j++){
 					if(dot_Four[j]!=0x3f){
-					  Frame[j]=dot_Four[j];
+					  Frame[37020+j]=dot_Four[j];
 					}
 				}
 			break;
 			case 53:
 				for(int j=0;j<=5760;j++){
 					if(dot_Five[j]!=0x3f){
-					  Frame[j]=dot_Five[j];
+					  Frame[37020+j]=dot_Five[j];
 					}
 				}
 			break;
 			case 54:
 				for(int j=0;j<=5760;j++){
 					if(dot_Six[j]!=0x3f){
-					  Frame[j]=dot_Six[j];
+					  Frame[37020+j]=dot_Six[j];
 					}
 				}
 			break;
 			case 55:
 				for(int j=0;j<=5760;j++){
 					if(dot_Seven[j]!=0x3f){
-					  Frame[j]=dot_Seven[j];
+					  Frame[37020+j]=dot_Seven[j];
 					}
 				}
 			break;
 			case 56:
 				for(int j=0;j<=5760;j++){
 					if(dot_Egg[j]!=0x3f){
-					  Frame[j]=dot_Egg[j];
+					  Frame[37020+j]=dot_Egg[j];
 					}
 				}
 			break;
 			case 57:
 				for(int j=0;j<=5760;j++){
 					if(dot_Nine[j]!=0x3f){
-					  Frame[j]=dot_Nine[j];
+					  Frame[37020+j]=dot_Nine[j];
 					}
 				}
 			break;
@@ -1799,7 +1799,7 @@ void makeImg(){
 					case 48:
 						for(int j=0;j<=5760;j++){
 							if(Zero_sf[j]!=0x3f){
-								 Frame[j]=Zero_sf[j];
+								 Frame[37020+j]=Zero_sf[j];
 							}
 
 						}
@@ -1807,63 +1807,63 @@ void makeImg(){
 					case 49:
 						for(int j=0;j<=5760;j++){
 							if(One_sf[j]!=0x3f){
-							  Frame[j]=One_sf[j];
+							  Frame[37020+j]=One_sf[j];
 							}
 						}
 					break;
 					case 50:
 						for(int j=0;j<=5760;j++){
 							if(Two_sf[j]!=0x3f){
-							  Frame[j]=Two_sf[j];
+							  Frame[37020+j]=Two_sf[j];
 							}
 						}
 					break;
 					case 51:
 						for(int j=0;j<=5760;j++){
 							if(Three_sf[j]!=0x3f){
-							  Frame[j]=Three_sf[j];
+							  Frame[37020+j]=Three_sf[j];
 							}
 						}
 					break;
 					case 52:
 						for(int j=0;j<=5760;j++){
 							if(Four_sf[j]!=0x3f){
-							  Frame[j]=Four_sf[j];
+							  Frame[37020+j]=Four_sf[j];
 							}
 						}
 					break;
 					case 53:
 						for(int j=0;j<=5760;j++){
 							if(Five_sf[j]!=0x3f){
-							  Frame[j]=Five_sf[j];
+							  Frame[37020+j]=Five_sf[j];
 							}
 						}
 					break;
 					case 54:
 						for(int j=0;j<=5760;j++){
 							if(six_sf[j]!=0x3f){
-							  Frame[j]=six_sf[j];
+							  Frame[37020+j]=six_sf[j];
 							}
 						}
 					break;
 					case 55:
 						for(int j=0;j<=5760;j++){
 							if(seven_sf[j]!=0x3f){
-							  Frame[j]=seven_sf[j];
+							  Frame[37020+j]=seven_sf[j];
 							}
 						}
 					break;
 					case 56:
 						for(int j=0;j<=5760;j++){
 							if(egg_sf[j]!=0x3f){
-							  Frame[j]=egg_sf[j];
+							  Frame[37020+j]=egg_sf[j];
 							}
 						}
 					break;
 					case 57:
 						for(int j=0;j<=5760;j++){
 							if(nine_sf[j]!=0x3f){
-							  Frame[j]=nine_sf[j];
+							  Frame[37020+j]=nine_sf[j];
 							}
 						}
 					break;
@@ -1874,7 +1874,7 @@ void makeImg(){
 					case 48:
 						for(int j=0;j<=5760;j++){
 							if(Zero_mf[j]!=0x3f){
-								 Frame[j]=Zero_mf[j];
+								 Frame[37020+j]=Zero_mf[j];
 							}
 
 						}
@@ -1882,67 +1882,388 @@ void makeImg(){
 					case 49:
 						for(int j=0;j<=5760;j++){
 							if(One_mf[j]!=0x3f){
-							  Frame[j]=One_mf[j];
+							  Frame[37020+j]=One_mf[j];
 							}
 						}
 					break;
 					case 50:
 						for(int j=0;j<=5760;j++){
 							if(Two_mf[j]!=0x3f){
-							  Frame[j]=Two_mf[j];
+							  Frame[37020+j]=Two_mf[j];
 							}
 						}
 					break;
 					case 51:
 						for(int j=0;j<=5760;j++){
 							if(Three_mf[j]!=0x3f){
-							  Frame[j]=Three_mf[j];
+							  Frame[37020+j]=Three_mf[j];
 							}
 						}
 					break;
 					case 52:
 						for(int j=0;j<=5760;j++){
 							if(Four_mf[j]!=0x3f){
-							  Frame[j]=Four_mf[j];
+							  Frame[37020+j]=Four_mf[j];
 							}
 						}
 					break;
 					case 53:
 						for(int j=0;j<=5760;j++){
 							if(Five_mf[j]!=0x3f){
-							  Frame[j]=Five_mf[j];
+							  Frame[37020+j]=Five_mf[j];
 							}
 						}
 					break;
 					case 54:
 						for(int j=0;j<=5760;j++){
 							if(six_mf[j]!=0x3f){
-							  Frame[j]=six_mf[j];
+							  Frame[37020+j]=six_mf[j];
 							}
 						}
 					break;
 					case 55:
 						for(int j=0;j<=5760;j++){
 							if(seven_mf[j]!=0x3f){
-							  Frame[j]=seven_mf[j];
+							  Frame[37020+j]=seven_mf[j];
 							}
 						}
 					break;
 					case 56:
 						for(int j=0;j<=5760;j++){
 							if(egg_mf[j]!=0x3f){
-							  Frame[j]=egg_mf[j];
+							  Frame[37020+j]=egg_mf[j];
 							}
 						}
 					break;
 					case 57:
 						for(int j=0;j<=5760;j++){
 							if(nine_mf[j]!=0x3f){
-							  Frame[j]=nine_mf[j];
+							  Frame[37020+j]=nine_mf[j];
 							}
 						}
 					break;
 				 }
+
+
+
+
+
+				Cno=bufferT[3];
+					switch (Cno) {
+						case 48:
+							for(int j=0;j<=5760;j++){
+								if(C_Zero[j]!=0x3f){
+									 Frame[7680+j]=C_Zero[j];
+								}
+
+							}
+						break;
+						case 49:
+							for(int j=0;j<=5760;j++){
+								if(C_One[j]!=0x3f){
+								  Frame[7680+j]=C_One[j];
+								}
+							}
+						break;
+						case 50:
+							for(int j=0;j<=5760;j++){
+								if(C_Two[j]!=0x3f){
+								  Frame[7680+j]=C_Two[j];
+								}
+							}
+						break;
+						case 51:
+							for(int j=0;j<=5760;j++){
+								if(C_Three[j]!=0x3f){
+								  Frame[7680+j]=C_Three[j];
+								}
+							}
+						break;
+						case 52:
+							for(int j=0;j<=5760;j++){
+								if(C_Four[j]!=0x3f){
+								  Frame[7680+j]=C_Four[j];
+								}
+							}
+						break;
+						case 53:
+							for(int j=0;j<=5760;j++){
+								if(C_Five[j]!=0x3f){
+								  Frame[7680+j]=C_Five[j];
+								}
+							}
+						break;
+						case 54:
+							for(int j=0;j<=5760;j++){
+								if(C_Six[j]!=0x3f){
+								  Frame[7680+j]=C_Six[j];
+								}
+							}
+						break;
+						case 55:
+							for(int j=0;j<=5760;j++){
+								if(C_Seven[j]!=0x3f){
+								  Frame[7680+j]=C_Seven[j];
+								}
+							}
+						break;
+						case 56:
+							for(int j=0;j<=5760;j++){
+								if(C_Egg[j]!=0x3f){
+								  Frame[7680+j]=C_Egg[j];
+								}
+							}
+						break;
+						case 57:
+							for(int j=0;j<=5760;j++){
+								if(C_Nine[j]!=0x3f){
+								  Frame[7680+j]=C_Nine[j];
+								}
+							}
+						break;
+					 }
+					Cno=bufferT[2];
+						switch (Cno) {
+							case 48:
+								for(int j=0;j<=5760;j++){
+									if(dot_Zero[j]!=0x3f){
+										 Frame[7680+j]=dot_Zero[j];
+									}
+
+								}
+							break;
+							case 49:
+								for(int j=0;j<=5760;j++){
+									if(dot_One[j]!=0x3f){
+									  Frame[7680+j]=dot_One[j];
+									}
+								}
+							break;
+							case 50:
+								for(int j=0;j<=5760;j++){
+									if(dot_Two[j]!=0x3f){
+									  Frame[7680+j]=dot_Two[j];
+									}
+								}
+							break;
+							case 51:
+								for(int j=0;j<=5760;j++){
+									if(dot_Three[j]!=0x3f){
+									  Frame[7680+j]=dot_Three[j];
+									}
+								}
+							break;
+							case 52:
+								for(int j=0;j<=5760;j++){
+									if(dot_Four[j]!=0x3f){
+									  Frame[7680+j]=dot_Four[j];
+									}
+								}
+							break;
+							case 53:
+								for(int j=0;j<=5760;j++){
+									if(dot_Five[j]!=0x3f){
+									  Frame[7680+j]=dot_Five[j];
+									}
+								}
+							break;
+							case 54:
+								for(int j=0;j<=5760;j++){
+									if(dot_Six[j]!=0x3f){
+									  Frame[7680+j]=dot_Six[j];
+									}
+								}
+							break;
+							case 55:
+								for(int j=0;j<=5760;j++){
+									if(dot_Seven[j]!=0x3f){
+									  Frame[7680+j]=dot_Seven[j];
+									}
+								}
+							break;
+							case 56:
+								for(int j=0;j<=5760;j++){
+									if(dot_Egg[j]!=0x3f){
+									  Frame[7680+j]=dot_Egg[j];
+									}
+								}
+							break;
+							case 57:
+								for(int j=0;j<=5760;j++){
+									if(dot_Nine[j]!=0x3f){
+									  Frame[7680+j]=dot_Nine[j];
+									}
+								}
+							break;
+						 }
+						Cno=bufferT[1];
+								switch (Cno) {
+									case 48:
+										for(int j=0;j<=5760;j++){
+											if(Zero_sf[j]!=0x3f){
+												 Frame[7680+j]=Zero_sf[j];
+											}
+
+										}
+									break;
+									case 49:
+										for(int j=0;j<=5760;j++){
+											if(One_sf[j]!=0x3f){
+											  Frame[7680+j]=One_sf[j];
+											}
+										}
+									break;
+									case 50:
+										for(int j=0;j<=5760;j++){
+											if(Two_sf[j]!=0x3f){
+											  Frame[7680+j]=Two_sf[j];
+											}
+										}
+									break;
+									case 51:
+										for(int j=0;j<=5760;j++){
+											if(Three_sf[j]!=0x3f){
+											  Frame[7680+j]=Three_sf[j];
+											}
+										}
+									break;
+									case 52:
+										for(int j=0;j<=5760;j++){
+											if(Four_sf[j]!=0x3f){
+											  Frame[7680+j]=Four_sf[j];
+											}
+										}
+									break;
+									case 53:
+										for(int j=0;j<=5760;j++){
+											if(Five_sf[j]!=0x3f){
+											  Frame[7680+j]=Five_sf[j];
+											}
+										}
+									break;
+									case 54:
+										for(int j=0;j<=5760;j++){
+											if(six_sf[j]!=0x3f){
+											  Frame[7680+j]=six_sf[j];
+											}
+										}
+									break;
+									case 55:
+										for(int j=0;j<=5760;j++){
+											if(seven_sf[j]!=0x3f){
+											  Frame[7680+j]=seven_sf[j];
+											}
+										}
+									break;
+									case 56:
+										for(int j=0;j<=5760;j++){
+											if(egg_sf[j]!=0x3f){
+											  Frame[7680+j]=egg_sf[j];
+											}
+										}
+									break;
+									case 57:
+										for(int j=0;j<=5760;j++){
+											if(nine_sf[j]!=0x3f){
+											  Frame[7680+j]=nine_sf[j];
+											}
+										}
+									break;
+								 }
+
+								Cno=bufferT[0];
+								switch (Cno) {
+									case 48:
+										for(int j=0;j<=5760;j++){
+											if(Zero_mf[j]!=0x3f){
+												 Frame[7680+j]=Zero_mf[j];
+											}
+
+										}
+									break;
+									case 49:
+										for(int j=0;j<=5760;j++){
+											if(One_mf[j]!=0x3f){
+											  Frame[7680+j]=One_mf[j];
+											}
+										}
+									break;
+									case 50:
+										for(int j=0;j<=5760;j++){
+											if(Two_mf[j]!=0x3f){
+											  Frame[7680+j]=Two_mf[j];
+											}
+										}
+									break;
+									case 51:
+										for(int j=0;j<=5760;j++){
+											if(Three_mf[j]!=0x3f){
+											  Frame[7680+j]=Three_mf[j];
+											}
+										}
+									break;
+									case 52:
+										for(int j=0;j<=5760;j++){
+											if(Four_mf[j]!=0x3f){
+											  Frame[7680+j]=Four_mf[j];
+											}
+										}
+									break;
+									case 53:
+										for(int j=0;j<=5760;j++){
+											if(Five_mf[j]!=0x3f){
+											  Frame[7680+j]=Five_mf[j];
+											}
+										}
+									break;
+									case 54:
+										for(int j=0;j<=5760;j++){
+											if(six_mf[j]!=0x3f){
+											  Frame[7680+j]=six_mf[j];
+											}
+										}
+									break;
+									case 55:
+										for(int j=0;j<=5760;j++){
+											if(seven_mf[j]!=0x3f){
+											  Frame[7680+j]=seven_mf[j];
+											}
+										}
+									break;
+									case 56:
+										for(int j=0;j<=5760;j++){
+											if(egg_mf[j]!=0x3f){
+											  Frame[7680+j]=egg_mf[j];
+											}
+										}
+									break;
+									case 57:
+										for(int j=0;j<=5760;j++){
+											if(nine_mf[j]!=0x3f){
+											  Frame[7680+j]=nine_mf[j];
+											}
+										}
+									break;
+								 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
@@ -1960,6 +2281,24 @@ void fillFrame(){
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+void Updatescreen(){
+	fillFrame();
+	sortt(26.42,42.26);
+//	sortt(realtemp,realhumidity);
+	makeImg();
+	HAL_SPI_Transmit_DMA(&hspi1, Frame, 49152);
+}
 
 
 
